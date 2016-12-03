@@ -1,9 +1,16 @@
 package se.dset.android.connectfour.realm;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class GameState extends RealmObject {
+    @PrimaryKey
+    @Required
+    private String id;
+
     private int rows;
     private int columns;
     private int winningCondition;
@@ -13,7 +20,8 @@ public class GameState extends RealmObject {
     public GameState() {
     }
 
-    public GameState(int rows, int columns, int winningCondition, RealmList<Player> players) {
+    public GameState(String id, int rows, int columns, int winningCondition, RealmList<Player> players) {
+        this.id = id;
         this.rows = rows;
         this.columns = columns;
         this.winningCondition = winningCondition;
@@ -21,12 +29,52 @@ public class GameState extends RealmObject {
         this.moves = new RealmList<>();
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
+    }
+
+    public int getWinningCondition() {
+        return winningCondition;
+    }
+
+    public void setWinningCondition(int winningCondition) {
+        this.winningCondition = winningCondition;
+    }
+
     public RealmList<Player> getPlayers() {
         return players;
     }
 
+    public void setPlayers(RealmList<Player> players) {
+        this.players = players;
+    }
+
     public RealmList<Move> getMoves() {
         return moves;
+    }
+
+    public void setMoves(RealmList<Move> moves) {
+        this.moves = moves;
     }
 
     public Move placeInColumn(int column) {
@@ -46,7 +94,11 @@ public class GameState extends RealmObject {
         }
 
         Move move = new Move(getCurrentPlayer(), row, column);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
         getMoves().add(move);
+        realm.commitTransaction();
+        realm.close();
 
         return move;
     }
