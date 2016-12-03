@@ -30,6 +30,10 @@ public class GameState extends RealmObject {
     }
 
     public Move placeInColumn(int column) {
+        if (isGameOver()) {
+            return null;
+        }
+
         int row = 0;
         for (Move move : getMoves()) {
             if (move.getColumn() == column) {
@@ -57,13 +61,16 @@ public class GameState extends RealmObject {
     }
 
     public boolean hasGameWinner() {
+        if (getMoves().isEmpty()) {
+            return false;
+        }
+
         String[][] board = new String[rows][columns];
         for (Move move : getMoves()) {
             board[move.getRow()][move.getColumn()] = move.getPlayer().getName();
         }
 
         Move lastMove = getMoves().last();
-        String lastMoveName = lastMove.getPlayer().getName();
         int lastMoveRow = lastMove.getRow();
         int lastMoveColumn = lastMove.getColumn();
 

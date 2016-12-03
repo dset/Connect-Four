@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -64,7 +66,10 @@ public class GameActivity extends AppCompatActivity {
         int playerIndex = state.getPlayers().indexOf(state.getMoves().last().getPlayer());
         int color = Arrays.asList(Color.RED, Color.BLUE).get(playerIndex);
 
-        cells[move.getRow()][move.getColumn()].setBackgroundColor(color);
+        BoardCell cell = cells[move.getRow()][move.getColumn()];
+        cell.setBackgroundColor(color);
+        cell.setTranslationY(-1300f);
+        cell.animate().translationY(0).setDuration(500).setInterpolator(new AccelerateInterpolator()).start();
 
         if (state.isGameOver()) {
             if (state.hasGameWinner()) {
