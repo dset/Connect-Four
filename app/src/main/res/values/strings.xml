@@ -12,4 +12,8 @@
     <string name="dialog_restart_negative">Cancel</string>
 
     <string name="toast_game_hint">Tap board to place disk</string>
+
+    <string name="button_start_game">Play game</string>
+    <string name="button_high_score">High score</string>
+    <string name="credit">By Dan Setterquist</string>
 </resources>
