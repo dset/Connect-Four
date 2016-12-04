@@ -1,8 +1,12 @@
 package se.dset.android.connectfour;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -28,11 +32,15 @@ public class GameActivity extends AppCompatActivity {
 
     private static final String SAVED_GAME_STATE_ID = "saved_game_state_id";
 
+    private int numRows;
+    private int numColumns;
+    private List<String> playerNames;
+    private int[] playerColors;
+
     private BoardCellView[][] board;
     private Realm realm;
     private String gameStateId;
     private GameState state;
-    private int[] playerColors;
 
     private View indicator;
     private TextView status;
@@ -44,10 +52,10 @@ public class GameActivity extends AppCompatActivity {
         indicator = findViewById(R.id.indicator);
         status = (TextView) findViewById(R.id.status);
 
-        int numRows = getIntent().getIntExtra(EXTRA_NUM_ROWS, 6);
-        int numColumns = getIntent().getIntExtra(EXTRA_NUM_COLUMNS, 7);
+        numRows = getIntent().getIntExtra(EXTRA_NUM_ROWS, 6);
+        numColumns = getIntent().getIntExtra(EXTRA_NUM_COLUMNS, 7);
 
-        List<String> playerNames = getIntent().getStringArrayListExtra(EXTRA_PLAYER_NAMES);
+        playerNames = getIntent().getStringArrayListExtra(EXTRA_PLAYER_NAMES);
         if (playerNames == null) {
             playerNames = Arrays.asList("Player 1", "Player 2");
         }
@@ -84,17 +92,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (gameStateId == null) {
-            realm.beginTransaction();
-
-            Player player1 = realm.copyToRealmOrUpdate(new Player(playerNames.get(0)));
-            Player player2 = realm.copyToRealmOrUpdate(new Player(playerNames.get(1)));
-            RealmList<Player> players = new RealmList<>(player1, player2);
-            GameState tmpState = new GameState(UUID.randomUUID().toString(), numRows, numColumns, 4, players);
-            state = realm.copyToRealm(tmpState);
-
-            realm.commitTransaction();
-
-            gameStateId = state.getId();
+            newGameState();
         } else {
             realm.beginTransaction();
             state = realm.where(GameState.class).equalTo("id", gameStateId).findFirst();
@@ -105,6 +103,20 @@ public class GameActivity extends AppCompatActivity {
             renderMove(move, false);
         }
         updateStatus();
+    }
+
+    private void newGameState() {
+        realm.beginTransaction();
+
+        Player player1 = realm.copyToRealmOrUpdate(new Player(playerNames.get(0)));
+        Player player2 = realm.copyToRealmOrUpdate(new Player(playerNames.get(1)));
+        RealmList<Player> players = new RealmList<>(player1, player2);
+        GameState tmpState = new GameState(UUID.randomUUID().toString(), numRows, numColumns, 4, players);
+        state = realm.copyToRealm(tmpState);
+
+        realm.commitTransaction();
+
+        gameStateId = state.getId();
     }
 
     @Override
@@ -165,5 +177,41 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void onRestartClicked(View view) {
+        RestartDialogFragment dialog = new RestartDialogFragment();
+        dialog.show(getSupportFragmentManager(), "restart_dialog");
+    }
+
+    public void restartGame() {
+        for (int row = 0; row < board.length; row++) {
+            for (int column = 0; column < board[row].length; column++) {
+                board[row][column].animate().cancel();
+                board[row][column].setBackgroundColor(Color.TRANSPARENT);
+            }
+        }
+
+        newGameState();
+        updateStatus();
+    }
+
+    public static class RestartDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.dialog_restart_title)
+                    .setMessage(R.string.dialog_restart_message)
+                    .setPositiveButton(R.string.dialog_restart_positive, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            GameActivity activity = (GameActivity) getActivity();
+                            if (activity != null) {
+                                activity.restartGame();
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_restart_negative, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+            return builder.create();
+        }
     }
 }

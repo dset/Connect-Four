@@ -5,4 +5,9 @@
     <string name="status_win">%1$s is the winner!</string>
     <string name="status_draw">It\'s a draw!</string>
     <string name="status_turn">It\'s %1$s\'s turn</string>
+
+    <string name="dialog_restart_title">Restart</string>
+    <string name="dialog_restart_message">Restart the game?</string>
+    <string name="dialog_restart_positive">OK</string>
+    <string name="dialog_restart_negative">Cancel</string>
 </resources>
