@@ -6,9 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -22,6 +23,8 @@ import se.dset.android.connectfour.view.NoScrollGridView;
 public class GameActivity extends AppCompatActivity {
     public static final String EXTRA_NUM_ROWS = "extra_num_rows";
     public static final String EXTRA_NUM_COLUMNS = "extra_num_columns";
+    public static final String EXTRA_PLAYER_NAMES = "extra_player_names";
+    public static final String EXTRA_PLAYER_COLORS = "extra_player_colors";
 
     private static final String SAVED_GAME_STATE_ID = "saved_game_state_id";
 
@@ -29,14 +32,30 @@ public class GameActivity extends AppCompatActivity {
     private Realm realm;
     private String gameStateId;
     private GameState state;
+    private int[] playerColors;
+
+    private View indicator;
+    private TextView status;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        indicator = findViewById(R.id.indicator);
+        status = (TextView) findViewById(R.id.status);
 
         int numRows = getIntent().getIntExtra(EXTRA_NUM_ROWS, 6);
         int numColumns = getIntent().getIntExtra(EXTRA_NUM_COLUMNS, 7);
+
+        List<String> playerNames = getIntent().getStringArrayListExtra(EXTRA_PLAYER_NAMES);
+        if (playerNames == null) {
+            playerNames = Arrays.asList("Player 1", "Player 2");
+        }
+
+        playerColors = getIntent().getIntArrayExtra(EXTRA_PLAYER_COLORS);
+        if (playerColors == null) {
+            playerColors = new int[]{Color.parseColor("#4298b5"), Color.parseColor("#dd5f32")};
+        }
 
         NoScrollGridView boardLayout = (NoScrollGridView) findViewById(R.id.board_layout);
         boardLayout.setNumColumns(numColumns);
@@ -67,8 +86,8 @@ public class GameActivity extends AppCompatActivity {
         if (gameStateId == null) {
             realm.beginTransaction();
 
-            Player player1 = realm.copyToRealmOrUpdate(new Player("Player 1"));
-            Player player2 = realm.copyToRealmOrUpdate(new Player("Player 2"));
+            Player player1 = realm.copyToRealmOrUpdate(new Player(playerNames.get(0)));
+            Player player2 = realm.copyToRealmOrUpdate(new Player(playerNames.get(1)));
             RealmList<Player> players = new RealmList<>(player1, player2);
             GameState tmpState = new GameState(UUID.randomUUID().toString(), numRows, numColumns, 4, players);
             state = realm.copyToRealm(tmpState);
@@ -85,6 +104,7 @@ public class GameActivity extends AppCompatActivity {
         for (Move move : state.getMoves()) {
             renderMove(move, false);
         }
+        updateStatus();
     }
 
     @Override
@@ -109,19 +129,12 @@ public class GameActivity extends AppCompatActivity {
         }
 
         renderMove(move, true);
-
-        if (state.isGameOver()) {
-            if (state.hasGameWinner()) {
-                Toast.makeText(this, state.getWinningPlayer().getName() + " is the winner!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "It's a draw!", Toast.LENGTH_LONG).show();
-            }
-        }
+        updateStatus();
     }
 
     private void renderMove(Move move, boolean animate) {
         int playerIndex = state.getPlayers().indexOf(move.getPlayer());
-        int color = Arrays.asList(Color.RED, Color.BLUE).get(playerIndex);
+        int color = playerColors[playerIndex];
 
         BoardCellView cell = board[move.getRow()][move.getColumn()];
         cell.setBackgroundColor(color);
@@ -130,5 +143,27 @@ public class GameActivity extends AppCompatActivity {
             cell.setTranslationY(-1300f);
             cell.animate().translationY(0).setDuration(500).setInterpolator(new AccelerateInterpolator()).start();
         }
+    }
+
+    private void updateStatus() {
+        if (state.isGameOver()) {
+            if (state.hasGameWinner()) {
+                Player winner = state.getWinningPlayer();
+                status.setText(getString(R.string.status_win, winner.getName()));
+                int color = playerColors[state.getPlayers().indexOf(winner)];
+                indicator.setBackgroundColor(color);
+            } else {
+                status.setText(R.string.status_draw);
+                indicator.setBackgroundColor(Color.WHITE);
+            }
+        } else {
+            Player player = state.getCurrentPlayer();
+            status.setText(getString(R.string.status_turn, player.getName()));
+            int color = playerColors[state.getPlayers().indexOf(player)];
+            indicator.setBackgroundColor(color);
+        }
+    }
+
+    public void onRestartClicked(View view) {
     }
 }

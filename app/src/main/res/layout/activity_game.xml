@@ -10,14 +10,35 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/colorAccent">
+        android:layout_height="50dp"
+        android:background="@android:color/black">
+
+        <View
+            android:id="@+id/indicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Player 1's turn"/>
-    </LinearLayout>
+            android:layout_toRightOf="@id/indicator"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/restart_button"
+            android:onClick="onRestartClicked"/>
+    </RelativeLayout>
 </LinearLayout>
