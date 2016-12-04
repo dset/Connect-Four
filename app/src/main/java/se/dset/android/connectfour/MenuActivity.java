@@ -19,5 +19,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void onHighScoreButtonClicked(View view) {
+        Intent intent = new Intent(this, HighScoreActivity.class);
+        startActivity(intent);
     }
 }

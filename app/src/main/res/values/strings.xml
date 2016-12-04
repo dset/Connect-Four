@@ -16,4 +16,9 @@
     <string name="button_start_game">Play game</string>
     <string name="button_high_score">High score</string>
     <string name="credit">By Dan Setterquist</string>
+
+    <string name="info_empty_high_score">No games</string>
+
+    <string name="high_score_title_name">Name</string>
+    <string name="high_score_title_wins">Wins</string>
 </resources>
