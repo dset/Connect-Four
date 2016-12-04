@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayout;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
@@ -17,13 +16,16 @@ import io.realm.RealmList;
 import se.dset.android.connectfour.realm.GameState;
 import se.dset.android.connectfour.realm.Move;
 import se.dset.android.connectfour.realm.Player;
+import se.dset.android.connectfour.view.BoardCellView;
+import se.dset.android.connectfour.view.NoScrollGridView;
 
 public class GameActivity extends AppCompatActivity {
+    public static final String EXTRA_NUM_ROWS = "extra_num_rows";
+    public static final String EXTRA_NUM_COLUMNS = "extra_num_columns";
+
     private static final String SAVED_GAME_STATE_ID = "saved_game_state_id";
 
-    private GridLayout board;
-    private BoardCell[][] cells;
-
+    private BoardCellView[][] board;
     private Realm realm;
     private String gameStateId;
     private GameState state;
@@ -33,17 +35,16 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        board = (GridLayout) findViewById(R.id.board);
-        cells = new BoardCell[board.getRowCount()][board.getColumnCount()];
-        for (int i = 0; i < board.getRowCount(); i++) {
-            for (int j = 0; j < board.getColumnCount(); j++) {
-                BoardCell view = new BoardCell(this);
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams(
-                        GridLayout.spec(i), GridLayout.spec(j, 1.0f));
-                params.width = 0;
-                params.height = 0;
-                view.setLayoutParams(params);
-                board.addView(view);
+        int numRows = getIntent().getIntExtra(EXTRA_NUM_ROWS, 6);
+        int numColumns = getIntent().getIntExtra(EXTRA_NUM_COLUMNS, 7);
+
+        NoScrollGridView boardLayout = (NoScrollGridView) findViewById(R.id.board_layout);
+        boardLayout.setNumColumns(numColumns);
+        board = new BoardCellView[numRows][numColumns];
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numColumns; j++) {
+                BoardCellView view = new BoardCellView(this);
+                boardLayout.addView(view);
 
                 final int column = j;
                 view.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +54,7 @@ public class GameActivity extends AppCompatActivity {
                     }
                 });
 
-                cells[board.getRowCount() - 1 - i][j] = view;
+                board[numRows - 1 - i][j] = view;
             }
         }
 
@@ -69,7 +70,7 @@ public class GameActivity extends AppCompatActivity {
             Player player1 = realm.copyToRealmOrUpdate(new Player("Player 1"));
             Player player2 = realm.copyToRealmOrUpdate(new Player("Player 2"));
             RealmList<Player> players = new RealmList<>(player1, player2);
-            GameState tmpState = new GameState(UUID.randomUUID().toString(), board.getRowCount(), board.getColumnCount(), 4, players);
+            GameState tmpState = new GameState(UUID.randomUUID().toString(), numRows, numColumns, 4, players);
             state = realm.copyToRealm(tmpState);
 
             realm.commitTransaction();
@@ -122,7 +123,7 @@ public class GameActivity extends AppCompatActivity {
         int playerIndex = state.getPlayers().indexOf(move.getPlayer());
         int color = Arrays.asList(Color.RED, Color.BLUE).get(playerIndex);
 
-        BoardCell cell = cells[move.getRow()][move.getColumn()];
+        BoardCellView cell = board[move.getRow()][move.getColumn()];
         cell.setBackgroundColor(color);
 
         if (animate) {
