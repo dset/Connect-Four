@@ -10,4 +10,6 @@
     <string name="dialog_restart_message">Restart the game?</string>
     <string name="dialog_restart_positive">OK</string>
     <string name="dialog_restart_negative">Cancel</string>
+
+    <string name="toast_game_hint">Tap board to place disk</string>
 </resources>

@@ -3,6 +3,8 @@ package se.dset.android.connectfour;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.PaintDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -11,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +90,9 @@ public class GameActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            Toast.makeText(this, R.string.toast_game_hint, Toast.LENGTH_LONG).show();
+        } else {
             gameStateId = savedInstanceState.getString(SAVED_GAME_STATE_ID);
         }
 
@@ -149,7 +154,9 @@ public class GameActivity extends AppCompatActivity {
         int color = playerColors[playerIndex];
 
         BoardCellView cell = board[move.getRow()][move.getColumn()];
-        cell.setBackgroundColor(color);
+        PaintDrawable drawable = new PaintDrawable(color);
+        drawable.setShape(new OvalShape());
+        cell.setBackground(drawable);
 
         if (animate) {
             cell.setTranslationY(-1300f);

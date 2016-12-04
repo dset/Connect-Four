@@ -1,6 +1,9 @@
 package se.dset.android.connectfour.view;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +92,32 @@ public class NoScrollGridView extends ViewGroup {
         }
 
         return correctedChildCount;
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+
+        int numRows = getNumRows();
+        int childSize = Math.min(width / numColumns, height / numRows);
+
+        int paddingLeft = (width - (numColumns * childSize)) / 2;
+        int paddingTop = height - (numRows * childSize);
+
+        Paint p = new Paint();
+        p.setColor(Color.parseColor("#ededed"));
+        canvas.drawRect(paddingLeft, paddingTop, paddingLeft + childSize, paddingTop + childSize, p);
+
+        for (int row = 0; row < numRows; row++) {
+            for (int column = (row % 2); column < numColumns; column += 2) {
+                int left = paddingLeft + column * childSize;
+                int top = paddingTop + row * childSize;
+                canvas.drawRect(left, top, left + childSize, top + childSize, p);
+            }
+        }
+
+        super.dispatchDraw(canvas);
     }
 }
 
