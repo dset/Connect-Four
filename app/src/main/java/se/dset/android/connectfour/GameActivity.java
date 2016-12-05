@@ -65,7 +65,7 @@ public class GameActivity extends AppCompatActivity {
 
         playerColors = getIntent().getIntArrayExtra(EXTRA_PLAYER_COLORS);
         if (playerColors == null) {
-            playerColors = new int[]{Color.parseColor("#4298b5"), Color.parseColor("#dd5f32")};
+            playerColors = new int[]{Color.BLUE, Color.RED};
         }
 
         NoScrollGridView boardLayout = (NoScrollGridView) findViewById(R.id.board_layout);

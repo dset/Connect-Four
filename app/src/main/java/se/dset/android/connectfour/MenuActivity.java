@@ -14,7 +14,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void onPlayButtonClicked(View view) {
-        Intent intent = new Intent(this, GameActivity.class);
+        Intent intent = new Intent(this, GameSettingsActivity.class);
         startActivity(intent);
     }
 

@@ -16,6 +16,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".GameSettingsActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+
         <activity android:name=".GameActivity">
         </activity>
 
