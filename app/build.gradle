@@ -3,7 +3,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "se.dset.android.connectfour"
         minSdkVersion 16
@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
