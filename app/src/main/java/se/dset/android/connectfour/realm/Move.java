@@ -6,13 +6,16 @@ public class Move extends RealmObject {
     private Player player;
     private int row;
     private int column;
+    private long timestamp;
 
-    public Move() {}
+    public Move() {
+    }
 
     public Move(Player player, int row, int column) {
         this.player = player;
         this.row = row;
         this.column = column;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public Player getPlayer() {
@@ -37,5 +40,13 @@ public class Move extends RealmObject {
 
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

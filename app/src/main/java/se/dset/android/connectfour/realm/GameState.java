@@ -16,6 +16,7 @@ public class GameState extends RealmObject {
     private int winningCondition;
     private RealmList<Player> players;
     private RealmList<Move> moves;
+    private long timestamp;
 
     public GameState() {
     }
@@ -27,54 +28,7 @@ public class GameState extends RealmObject {
         this.winningCondition = winningCondition;
         this.players = players;
         this.moves = new RealmList<>();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public void setRows(int rows) {
-        this.rows = rows;
-    }
-
-    public int getColumns() {
-        return columns;
-    }
-
-    public void setColumns(int columns) {
-        this.columns = columns;
-    }
-
-    public int getWinningCondition() {
-        return winningCondition;
-    }
-
-    public void setWinningCondition(int winningCondition) {
-        this.winningCondition = winningCondition;
-    }
-
-    public RealmList<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(RealmList<Player> players) {
-        this.players = players;
-    }
-
-    public RealmList<Move> getMoves() {
-        return moves;
-    }
-
-    public void setMoves(RealmList<Move> moves) {
-        this.moves = moves;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public Move placeInColumn(int column) {
@@ -160,5 +114,61 @@ public class GameState extends RealmObject {
         }
 
         return null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
+    }
+
+    public int getWinningCondition() {
+        return winningCondition;
+    }
+
+    public void setWinningCondition(int winningCondition) {
+        this.winningCondition = winningCondition;
+    }
+
+    public RealmList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(RealmList<Player> players) {
+        this.players = players;
+    }
+
+    public RealmList<Move> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(RealmList<Move> moves) {
+        this.moves = moves;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }
