@@ -6,6 +6,10 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
+/*
+Represents the current state of the game. Holds the players and the moves that have been made.
+Determines when the game is over.
+ */
 public class GameState extends RealmObject {
     @PrimaryKey
     @Required
@@ -31,11 +35,13 @@ public class GameState extends RealmObject {
         this.timestamp = System.currentTimeMillis();
     }
 
+    /* Attempts to place a disk for the current player in the given column. */
     public Move placeInColumn(int column) {
         if (isGameOver()) {
             return null;
         }
 
+        /* Determine how many disks are already in this column */
         int row = 0;
         for (Move move : getMoves()) {
             if (move.getColumn() == column) {
@@ -62,15 +68,20 @@ public class GameState extends RealmObject {
         return getPlayers().get(index);
     }
 
+    /* Returns true if the game is over. The game is over if one of the players has won
+    or if the board is filled with disks. */
     public boolean isGameOver() {
         return hasGameWinner() || getMoves().size() >= (rows * columns);
     }
 
+    /* Returns true if one of the players has won the game. */
     public boolean hasGameWinner() {
         if (getMoves().isEmpty()) {
             return false;
         }
 
+        /* Creates a matrix representation of the board that can be easily checked for
+        winning conditions. */
         String[][] board = new String[rows][columns];
         for (Move move : getMoves()) {
             board[move.getRow()][move.getColumn()] = move.getPlayer().getName();
@@ -80,6 +91,7 @@ public class GameState extends RealmObject {
         int lastMoveRow = lastMove.getRow();
         int lastMoveColumn = lastMove.getColumn();
 
+        /* Determine how many disks are connected vertically, horizontally and diagonally. */
         int connectedVertical = 1 + numConnectedInDirection(board, lastMoveRow, lastMoveColumn, -1, 0);
         int connectedHorizontal = 1 + numConnectedInDirection(board, lastMoveRow, lastMoveColumn, 0, -1)
                 + numConnectedInDirection(board, lastMoveRow, lastMoveColumn, 0, 1);
@@ -92,6 +104,8 @@ public class GameState extends RealmObject {
                 || connectedDiagonal1 >= winningCondition || connectedDiagonal2 >= winningCondition;
     }
 
+    /* Determines how many disks are connected to the disk at (startRow, startColumn) in the
+    direction of (dR, dC). */
     private int numConnectedInDirection(String[][] board, int startRow, int startColumn, int dR, int dC) {
         String name = board[startRow][startColumn];
         int connected = 0;

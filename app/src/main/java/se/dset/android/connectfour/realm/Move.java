@@ -2,6 +2,7 @@ package se.dset.android.connectfour.realm;
 
 import io.realm.RealmObject;
 
+/* Represents a single disk placement made by a player. */
 public class Move extends RealmObject {
     private Player player;
     private int row;

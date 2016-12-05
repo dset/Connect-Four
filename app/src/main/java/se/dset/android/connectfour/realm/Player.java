@@ -4,6 +4,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
+/* Represents a player. Players are identified by their names. */
 public class Player extends RealmObject {
     @PrimaryKey
     @Required

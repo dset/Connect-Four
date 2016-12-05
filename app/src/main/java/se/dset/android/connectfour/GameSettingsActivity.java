@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+/* The activity where the users choose their names and colors. */
 public class GameSettingsActivity extends AppCompatActivity {
     private static final String SAVED_P1_COLOR = "saved_p1_color";
     private static final String SAVED_P2_COLOR = "saved_p2_color";
@@ -58,12 +59,14 @@ public class GameSettingsActivity extends AppCompatActivity {
         String player1Name = p1EditText.getText().toString();
         String player2Name = p2EditText.getText().toString();
 
+        /* Make sure that the players have different names. */
         if (player1Name.equals(player2Name)) {
             player2Name += "-2";
         }
 
         ArrayList<String> players = new ArrayList<>(Arrays.asList(player1Name, player2Name));
         int[] colors = new int[]{p1Color, p2Color};
+
         Intent intent = new Intent(this, GameActivity.class);
         intent.putStringArrayListExtra(GameActivity.EXTRA_PLAYER_NAMES, players);
         intent.putExtra(GameActivity.EXTRA_PLAYER_COLORS, colors);

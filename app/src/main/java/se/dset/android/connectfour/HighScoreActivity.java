@@ -22,6 +22,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import se.dset.android.connectfour.realm.GameState;
 
+/* The activity that displays the high score. */
 public class HighScoreActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,8 +35,10 @@ public class HighScoreActivity extends AppCompatActivity {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
+        /* Maps a player name to the number of times that player has won. */
         Map<String, Integer> nameToWins = new HashMap<>();
 
+        /* Go through every game and count the wins for each player. */
         RealmResults<GameState> states = realm.where(GameState.class).findAll();
         for (GameState state : states) {
             if (state.hasGameWinner()) {
@@ -48,11 +51,13 @@ public class HighScoreActivity extends AppCompatActivity {
         realm.commitTransaction();
         realm.close();
 
+        /* Construct a Score object for each player. */
         List<Score> scores = new ArrayList<>();
         for (String player : nameToWins.keySet()) {
             scores.add(new Score(player, nameToWins.get(player)));
         }
 
+        /* Sort the scores with number of wins descending. */
         Collections.sort(scores, new Comparator<Score>() {
             @Override
             public int compare(Score s1, Score s2) {

@@ -25,8 +25,9 @@ import se.dset.android.connectfour.realm.GameState;
 import se.dset.android.connectfour.realm.Move;
 import se.dset.android.connectfour.realm.Player;
 import se.dset.android.connectfour.view.BoardCellView;
-import se.dset.android.connectfour.view.NoScrollGridView;
+import se.dset.android.connectfour.view.BoardLayout;
 
+/* The activity where the users play the game. */
 public class GameActivity extends AppCompatActivity {
     public static final String EXTRA_NUM_ROWS = "extra_num_rows";
     public static final String EXTRA_NUM_COLUMNS = "extra_num_columns";
@@ -68,7 +69,7 @@ public class GameActivity extends AppCompatActivity {
             playerColors = new int[]{Color.BLUE, Color.RED};
         }
 
-        NoScrollGridView boardLayout = (NoScrollGridView) findViewById(R.id.board_layout);
+        BoardLayout boardLayout = (BoardLayout) findViewById(R.id.board_layout);
         boardLayout.setNumColumns(numColumns);
         board = new BoardCellView[numRows][numColumns];
         for (int i = 0; i < numRows; i++) {
@@ -96,6 +97,8 @@ public class GameActivity extends AppCompatActivity {
             gameStateId = savedInstanceState.getString(SAVED_GAME_STATE_ID);
         }
 
+        /* If there is no ongoing game then create a new game. If there is an ongoing game
+        then restore it */
         if (gameStateId == null) {
             newGameState();
         } else {
@@ -104,6 +107,7 @@ public class GameActivity extends AppCompatActivity {
             realm.commitTransaction();
         }
 
+        /* Make sure that the board reflects the current state of the game. */
         for (Move move : state.getMoves()) {
             renderMove(move, false);
         }
@@ -127,6 +131,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        /* Save the id of the current game so that we can restore it. */
         outState.putString(SAVED_GAME_STATE_ID, gameStateId);
     }
 
@@ -139,9 +144,11 @@ public class GameActivity extends AppCompatActivity {
         realm = null;
     }
 
+    /* Attempts to place a disk for the current player in the given column. */
     private void placeInColumn(int column) {
         Move move = state.placeInColumn(column);
         if (move == null) {
+            /* Not a legal move. Do nothing. */
             return;
         }
 
@@ -149,6 +156,7 @@ public class GameActivity extends AppCompatActivity {
         updateStatus();
     }
 
+    /* Renders a disk representing the given move with optional animation. */
     private void renderMove(Move move, boolean animate) {
         int playerIndex = state.getPlayers().indexOf(move.getPlayer());
         int color = playerColors[playerIndex];
@@ -164,6 +172,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /* Updates the status bar to reflect the current state of the game. */
     private void updateStatus() {
         if (state.isGameOver()) {
             if (state.hasGameWinner()) {
@@ -188,6 +197,7 @@ public class GameActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "restart_dialog");
     }
 
+    /* Creates a new game state and resets the board and UI. */
     public void restartGame() {
         for (int row = 0; row < board.length; row++) {
             for (int column = 0; column < board[row].length; column++) {
@@ -200,6 +210,7 @@ public class GameActivity extends AppCompatActivity {
         updateStatus();
     }
 
+    /* A dialog asking for confirmation to restart the game. */
     public static class RestartDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {

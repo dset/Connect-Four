@@ -8,22 +8,26 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class NoScrollGridView extends ViewGroup {
+/* A ViewGroup that displays its children in a grid where each cell is a square.
+
+Note to Lunicore: This is a class that I implemented for an earlier project that I copied
+into this project with minor modifications. */
+public class BoardLayout extends ViewGroup {
     private static final int DEFAULT_NUM_COLUMNS = 3;
 
     private int numColumns;
 
-    public NoScrollGridView(Context context) {
+    public BoardLayout(Context context) {
         super(context);
         numColumns = DEFAULT_NUM_COLUMNS;
     }
 
-    public NoScrollGridView(Context context, AttributeSet attrs) {
+    public BoardLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         numColumns = DEFAULT_NUM_COLUMNS;
     }
 
-    public NoScrollGridView(Context context, AttributeSet attrs, int defStyle) {
+    public BoardLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         numColumns = DEFAULT_NUM_COLUMNS;
     }
@@ -96,6 +100,7 @@ public class NoScrollGridView extends ViewGroup {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        /* Draws the checkered background of the board. */
         int width = canvas.getWidth();
         int height = canvas.getHeight();
 
